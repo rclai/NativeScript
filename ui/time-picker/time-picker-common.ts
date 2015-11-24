@@ -12,22 +12,38 @@ function isMinuteValid(value: number): boolean {
     return types.isNumber(value) && value >= 0 && value <= 59;
 }
 
-export function getValidHour(hour: number, minHour: number, maxHour: number): number {
-    let hourValue = hour;
+export function getValidHour(hour: number, minHour: number, maxHour: number, oldHour: number, hourInterval: number): number {
+    let newHour = hour;
+
+    if (hourInterval > 0) {
+        if (newHour > oldHour) {
+            newHour = oldHour + hourInterval;
+        } else if (newHour < oldHour) {
+            newHour = oldHour - hourInterval;
+        }
+    }
 
     if (minHour && hour < minHour) {
-        hourValue = minHour
+        newHour = minHour
     }
 
     if (maxHour && hour > maxHour) {
-        hourValue = maxHour
+        newHour = maxHour
     }
 
-    return hourValue;
+    return newHour;
 }
 
-export function getValidMinute(minute: number, minMinute: number, maxMinute: number): number {
+export function getValidMinute(minute: number, minMinute: number, maxMinute: number, oldMinute: number, minuteInterval: number): number {
     let minuteValue = minute;
+
+    if (minuteInterval > 0) {
+        if (minuteValue > oldMinute) {
+            minuteValue = oldMinute + minuteInterval;
+        } else if (minuteValue < oldMinute) {
+            minuteValue = oldMinute - minuteInterval;
+        }
+    }
 
     if (minMinute && minute < minMinute) {
         minuteValue = minMinute
@@ -58,6 +74,12 @@ export class TimePicker extends view.View implements definition.TimePicker {
 
     public static maxMinuteProperty = new dependencyObservable.Property("maxMinute", "TimePicker",
         new proxy.PropertyMetadata(59, dependencyObservable.PropertyMetadataSettings.None, undefined, isMinuteValid));
+
+    public static hourIntervalProperty = new dependencyObservable.Property("hourInterval", "TimePicker",
+        new proxy.PropertyMetadata(undefined, dependencyObservable.PropertyMetadataSettings.None, undefined, isHourValid));
+
+    public static minuteIntervalProperty = new dependencyObservable.Property("minuteInterval", "TimePicker",
+        new proxy.PropertyMetadata(undefined, dependencyObservable.PropertyMetadataSettings.None, undefined, isMinuteValid));
 
     constructor() {
         super();
@@ -103,5 +125,19 @@ export class TimePicker extends view.View implements definition.TimePicker {
     }
     set minMinute(value: number) {
         this._setValue(TimePicker.minMinuteProperty, value);
+    }
+
+    get hourInterval(): number {
+        return this._getValue(TimePicker.hourIntervalProperty);
+    }
+    set hourInterval(value: number) {
+        this._setValue(TimePicker.hourIntervalProperty, value);
+    }
+
+    get minuteInterval(): number {
+        return this._getValue(TimePicker.minuteIntervalProperty);
+    }
+    set minuteInterval(value: number) {
+        this._setValue(TimePicker.minuteIntervalProperty, value);
     }
 } 

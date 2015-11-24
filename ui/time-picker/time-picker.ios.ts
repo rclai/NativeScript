@@ -19,7 +19,7 @@ function getDate(date: NSDate, hour?: number, minute?: number): NSDate {
 
 function onHourPropertyChanged(data: dependencyObservable.PropertyChangeData) {
     var picker = <TimePicker>data.object;
-    var validValue = common.getValidHour(data.newValue, picker.minHour, picker.maxHour);
+    var validValue = common.getValidHour(data.newValue, picker.minHour, picker.maxHour, data.oldValue, picker.hourInterval);
     if (validValue === data.newValue) {
         picker.ios.setDateAnimated(getDate(picker.ios.date, data.newValue, picker.minute), false);
     } else {
@@ -30,7 +30,7 @@ function onHourPropertyChanged(data: dependencyObservable.PropertyChangeData) {
 
 function onMinutePropertyChanged(data: dependencyObservable.PropertyChangeData) {
     var picker = <TimePicker>data.object;
-    var validValue = common.getValidMinute(data.newValue, picker.minMinute, picker.maxMinute);
+    var validValue = common.getValidMinute(data.newValue, picker.minMinute, picker.maxMinute, data.oldValue, picker.minuteInterval);
     if (validValue === data.newValue) {
         picker.ios.setDateAnimated(getDate(picker.ios.date, picker.hour, data.newValue), false);
     } else {
@@ -65,8 +65,8 @@ export class TimePicker extends common.TimePicker {
 
             if (types.isNumber(hour) && types.isNumber(minute)) {
                 this.ios.setDateAnimated(getDate(this.ios.date,
-                    common.getValidHour(hour, this.minHour, this.maxHour),
-                    common.getValidMinute(minute, this.minMinute, this.maxMinute)), false);
+                    common.getValidHour(hour, this.minHour, this.maxHour, this.hour, this.hourInterval),
+                    common.getValidMinute(minute, this.minMinute, this.maxMinute, this.minute, this.minuteInterval)), false);
             }
 
             this.ios.addTargetActionForControlEvents(this._changeHandler, "valueChanged", UIControlEvents.UIControlEventValueChanged);

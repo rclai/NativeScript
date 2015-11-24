@@ -7,7 +7,7 @@ import types = require("utils/types")
 function onHourPropertyChanged(data: dependencyObservable.PropertyChangeData) {
     var picker = <TimePicker>data.object;
 
-    var validValue = common.getValidHour(data.newValue, picker.minHour, picker.maxHour);
+    var validValue = common.getValidHour(data.newValue, picker.minHour, picker.maxHour, data.oldValue, picker.hourInterval);
     if (validValue === data.newValue) {
         picker._setNativeValueSilently(data.newValue, picker.minute);
     } else {
@@ -20,7 +20,7 @@ function onHourPropertyChanged(data: dependencyObservable.PropertyChangeData) {
 function onMinutePropertyChanged(data: dependencyObservable.PropertyChangeData) {
     var picker = <TimePicker>data.object;
 
-    var validValue = common.getValidMinute(data.newValue, picker.minMinute, picker.maxMinute);
+    var validValue = common.getValidMinute(data.newValue, picker.minMinute, picker.maxMinute, data.oldValue, picker.minuteInterval);
     if (validValue === data.newValue) {
         picker._setNativeValueSilently(picker.hour, data.newValue);
     } else {
@@ -76,7 +76,7 @@ export class TimePicker extends common.TimePicker {
             this.android.setOnTimeChangedListener(null);
 
             if (types.isNumber(hour)) {
-                var h = new java.lang.Integer(common.getValidHour(hour, this.minHour, this.maxHour));
+                var h = new java.lang.Integer(common.getValidHour(hour, this.minHour, this.maxHour, this.hour, this.hourInterval));
                 if (SDK >= 23) {
                     (<any>this.android).setHour(h);
                 } else {
@@ -85,7 +85,7 @@ export class TimePicker extends common.TimePicker {
             }
 
             if (types.isNumber(minute)) {
-                var m = new java.lang.Integer(common.getValidMinute(minute, this.minMinute, this.maxMinute));
+                var m = new java.lang.Integer(common.getValidMinute(minute, this.minMinute, this.maxMinute, this.minute, this.minuteInterval));
                 if (SDK >= 23) {
                     (<any>this.android).setMinute(m);
                 } else {

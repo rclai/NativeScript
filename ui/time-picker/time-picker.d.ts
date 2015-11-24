@@ -50,6 +50,16 @@ declare module "ui/time-picker" {
         minHour: number;
 
         /**
+         * Gets or sets the hour interval.
+         */
+        hourInterval: number;
+
+        /**
+         * Gets or sets the minute interval.
+         */
+        minuteInterval: number;
+
+        /**
          * Gets or sets the min time minute.
          */
         minMinute: number;
